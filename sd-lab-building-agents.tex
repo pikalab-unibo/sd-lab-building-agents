@@ -1,0 +1,103 @@
+%\documentclass[handout]{beamer}\mode<presentation>{\usetheme{AMSCesenaPurpleAndGold}}
+\documentclass[presentation]{beamer}\mode<presentation>{\usetheme{AMSCesenaPurpleAndGold}}
+%%%%
+
+\usepackage{sd-lab-building-agents}
+\usepackage{my-listings}
+\usepackage{forloop}
+
+\title[L4 -- Building Agents]{Building Agents from scratch}
+%
+\subtitle[SD]
+{Distributed Systems / Laboratory\\\scriptsize Sistemi Distribuiti / Laboratorio}
+%
+\author[Ciatto \and Omicini]
+{\emph{Giovanni Ciatto} \and Andrea Omicini\\
+	\texttt{giovanni.ciatto@unibo.it} \and \texttt{andrea.omicini@unibo.it}}
+%
+\institute[DISI, Univ. Bologna]
+{Dipartimento di Informatica -- Scienza e Ingegneria (DISI)\\\textsc{Alma Mater Studiorum} -- Universit{\`a} di Bologna a Cesena}
+%
+\date[A.Y. 2019/2020]{Academic Year 2019/2020}
+
+\setbeamercovered{transparent}
+
+\begin{document}
+	
+%\\\\\\\\\\\\\\\\\\\\\
+\frame{\titlepage}
+%\\\\\\\\\\\\\\\\\\\\\
+
+\section{Wetting your appetite}
+
+\begin{frame}
+\frametitle{Motivation \& Lecture Goals}
+
+\begin{itemize}
+	\item 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Lab 5 Repository on GitLab}
+
+	\begin{itemize}
+		\item Examples and exercises described in this lecture are provided by means of the following GitLab repository:
+		%
+		\begin{center}
+			\url{https://gitlab.com/pika-lab/courses/ds/aa1920/lab-05}
+		\end{center}
+		
+		\vfill
+		
+		\item Clone it on your machine using Git
+		%
+		\begin{itemize}
+		    \item[\$] \texttt{git clone \textit{<repo URL>}}
+		\end{itemize}
+		
+		\vfill
+		
+		\item Even if a minimal environment simply relying on a text editor + Gradle is sufficient for this lab, we kindly suggest to import the cloned repository into some IDE, e.g. IntelliJ Idea or Eclipse
+		%
+		%
+		\begin{itemize}
+		    \item in case of problems in importing the project on IntelliJ, try to downgrade the gradle wrapper
+		    %
+		    \item[\$] \texttt{./gradlew wrapper \alert{--gradle-version \textit{4.8.1}}}
+		\end{itemize}
+		
+		\vfill
+		
+		\item In order to be able to submit your exercises, please ensure you requested access to the \href{https://gitlab.com/pika-lab/courses/ds/aa1920}{GitLab group of the course}
+	\end{itemize}
+
+\end{frame}
+
+%===============================================================================
+\section*{}
+%===============================================================================
+
+%\\\\\\\\\\\\\\\\\\\\\
+\frame{\titlepage}
+%\\\\\\\\\\\\\\\\\\\\\
+
+%%===============================================================================
+%\section*{\refname}
+%%===============================================================================
+%
+%%\\\\\\\\\\\\\\\\\\\\\
+%%%%%
+%%\begin{frame}[t,allowframebreaks]\scriptsize
+%\begin{frame}[c]\footnotesize
+%\frametitle{\refname}
+%\bibliographystyle{apalike}
+%\bibliography{sd-lab-building-linda}
+%\end{frame}
+%%\\\\\\\\\\\\\\\\\\\\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,106 @@
+%******************************************************************************%
+% Packages
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amsthm}
+\usepackage{bbm}
+%\usepackage[framemethod=TikZ]{mdframed}
+%\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.arrows}
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{shapes.multipart}
+%\usepackage[pdftex]{graphicx}
+\usepackage{rotating}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{gensymb}
+\usepackage[active]{srcltx}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{caption}
+\usepackage{url}
+\usepackage{array}
+\usepackage{makecell}
+
+%% Names
+\newcommand{\Blockchain}{Blockchain}
+\newcommand{\blockchain}{blockchain}
+\newcommand{\BCT}{BCT}
+\newcommand{\SmartContract}{Smart Contract}
+\newcommand{\Smartcontract}{Smart contract}
+\newcommand{\smartcontract}{smart contract}
+\newcommand{\SC}{SC}
+\newcommand{\MultiAgentSystem}{Multi-Agent System}
+\newcommand{\Multiagentsystem}{Multi-agent system}
+\newcommand{\multiagentsystem}{multi-agent system}
+\newcommand{\MultiAgentSystems}{Multi-Agent Systems}
+\newcommand{\Multiagentsystems}{Multi-agent systems}
+\newcommand{\multiagentsystems}{multi-agent systems}
+\newcommand{\MAS}{MAS}
+\newcommand{\tendermint}{Tendermint}
+\newcommand{\tenderfone}{Tenderfone}
+\newcommand{\tuprolog}{{\sf{tu}}{{P}rolog}}
+\newcommand{\prolog}{{P}rolog}
+%% Cross-referencing
+\newcommand{\labelsec}[1]{\label{sec:#1}}
+\newcommand{\xs}[1]{\sectionname~\ref{sec:#1}}
+\newcommand{\xsp}[1]{\sectionname~\ref{sec:#1} \onpagename~\pageref{sec:#1}}
+\newcommand{\labelssec}[1]{\label{ssec:#1}}
+\newcommand{\xss}[1]{\subsectionname~\ref{ssec:#1}}
+\newcommand{\xssp}[1]{\subsectionname~\ref{ssec:#1} \onpagename~\pageref{ssec:#1}}
+\newcommand{\labelsssec}[1]{\label{sssec:#1}}
+\newcommand{\xsss}[1]{\subsectionname~\ref{sssec:#1}}
+\newcommand{\xsssp}[1]{\subsectionname~\ref{sssec:#1} \onpagename~\pageref{sssec:#1}}
+\newcommand{\labelfig}[1]{\label{fig:#1}}
+\newcommand{\xf}[1]{\figurename~\ref{fig:#1}}
+\newcommand{\xfp}[1]{\figurename~\ref{fig:#1} \onpagename~\pageref{fig:#1}}
+\newcommand{\labeltab}[1]{\label{tab:#1}}
+\newcommand{\xt}[1]{\tablename~\ref{tab:#1}}
+\newcommand{\xtp}[1]{\tablename~\ref{tab:#1} \onpagename~\pageref{tab:#1}}
+\newcommand{\labeldef}[1]{\label{def:#1}}
+\newcommand{\xd}[1]{\definitionname~\ref{def:#1}}
+\newcommand{\xdp}[1]{\definitionname ~\ref{def:#1} \onpagename~\pageref{tab:#1}}
+%% Category Names
+% \newcommand{\sectionname}{Section}
+% \newcommand{\subsectionname}{Subsection}
+\newcommand{\sectionsname}{\sectionname{}s}
+\newcommand{\subsectionsname}{\subsectionname{}s}
+% \newcommand{\secname}{\sectionname}
+\newcommand{\ssecname}{\subsectionname}
+\newcommand{\secsname}{\sectionsname}
+\newcommand{\ssecsname}{\subsectionsname}
+%\newcommand{\figurename}{Figure}
+%\newcommand{\tablename}{Table}
+\newcommand{\onpagename}{on page}
+
+\newcommand{\hint}[1]{\hfill{\scriptsize \alert{!} {\color{gray}#1}}}
+\newcommand{\fnhint}[1]{{\footnote{\scriptsize{\color{gray}#1}}}}
+
+\newcommand{\linda}{{\textsc{Linda}}}
+
+\newcommand{\columnsHH}[2]{\begin{columns}\begin{column}{.49\linewidth}#1\end{column}\hfill\begin{column}{.49\linewidth}#2\end{column}\end{columns}}
+
+\AtBeginSection[]
+{
+	\begin{frame}[c]\frametitle{Outline}
+		\begin{multicols}{2}
+			\tableofcontents[sectionstyle=show/shaded, subsectionstyle=show/shaded, subsubsectionstyle=hide/hide]
+		\end{multicols}
+	\end{frame}
+}
+
+\AtBeginSubsection[]
+{
+	\begin{frame}[c]\frametitle{Next in Line\ldots}
+		\begin{multicols}{2}
+			\tableofcontents[sectionstyle=shaded/shaded, subsectionstyle=show/shaded, subsubsectionstyle=hide/hide]
+		\end{multicols}
+	\end{frame}
+}
