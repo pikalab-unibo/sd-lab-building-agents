@@ -1,0 +1,24 @@
+@startuml
+actor "Client code" as C
+control "Agent" as A
+
+C -> A : ""//instantiation//""
+
+C -> A : ""start()""
+
+A -> A : ""onBegin()""
+
+loop
+A -> A : ""onRun()""
+end
+
+A -> A : ""**pause()**""
+
+== After a while ==
+
+C -> A : ""**resume()**""
+
+loop
+A -> A : ""onRun()""
+end
+@enduml

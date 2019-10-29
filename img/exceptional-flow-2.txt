@@ -1,0 +1,28 @@
+@startuml
+actor "Client code" as C
+control "Agent" as A
+
+A -> A : ""onRun()""
+
+A -> A : ""**//R//** = onUncaughtError(...)""
+
+alt ""**//R//** == AndThen.//CONTINUE//""
+
+A -> A : ""onRun()""
+
+else ""**//R//** == AndThen.//RESTART//""
+
+A -> A : ""onBegin()""
+
+else ""**//R//** == AndThen.//STOP//""
+
+A -> A : ""onEnd()""
+
+else ""**//R//** == AndThen.//PAUSE//""
+
+note right of A
+Do nothing
+end note
+
+end
+@enduml
