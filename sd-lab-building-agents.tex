@@ -393,6 +393,43 @@ For practical reasons, agents have two names:
     
 \end{frame}
 
+\begin{frame}{External VS internal API}
+
+\begin{itemize}
+    \item The \texttt{Agent} interface is actually the union of two API targetting different usages
+    
+    \vfill
+    
+    \item The \alert{external} API comprehends methods which are to be called \alert{from outside} the agent
+    %
+    \begin{itemize}
+        \item[eg] method \texttt{Agent::\alert{start()}}
+        \item[eg] method \texttt{Agent::\alert{await()}}
+        \item[eg] method \texttt{Agent::\alert{resume()}}
+    \end{itemize}
+    
+    \vfill
+    
+    \item The \alert{internal} API comprehends methods which are to be called \alert{from within} the agent itself
+    %
+    \begin{itemize}
+        \item[eg] method \texttt{Agent::\alert{stop()}}
+        \item[eg] method \texttt{Agent::\alert{pause()}}
+        \item[eg] method \texttt{Agent::\alert{pause()}}
+        \item[eg] method \texttt{Agent::\alert{restart()}}
+    \end{itemize}
+    
+    \vfill
+    
+    \item Briefly speking, methods composing the \alert{internal} API can be called by agent implementors \alert{only} within the \texttt{on*()} callbacks
+    %
+    \begin{itemize}
+        \item calling them elsewhere may lead to unexpected \& unpredicatable behaviour
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
 \subsection{Examples of valid scenarios}
 
 \begin{frame}{Normal Flow}\centering
@@ -559,6 +596,18 @@ For practical reasons, agents have two names:
     \end{itemize}
 \end{block}
 
+\begin{exampleblock}{Specification}
+    \begin{itemize}
+        \item The Pong agent waits for a message whose content is \texttt{"ping"} coming from the Ping agent
+        
+        \item It then then responds back with a message whose content is \texttt{"pong"}, directed towards the Ping agent
+        
+        \item Such behaviour is repeated until the Pong agent receives a containing \texttt{"stop"}
+        
+        \item[!] You can assume each agent knows the name of the other one, by construction
+    \end{itemize}
+\end{exampleblock}
+
 \begin{alertblock}{Question time}
     \begin{itemize}
         \item Can you see why suspensive operations are non-blocking in our architecture?
@@ -566,6 +615,47 @@ For practical reasons, agents have two names:
         \item Can you see where our architecture falls short?
     \end{itemize}
 \end{alertblock}
+
+\end{frame}
+
+\subsection{White pages prototype}
+
+\begin{frame}[allowframebreaks]{Exercise 5-3 -- Dynamically searching agent names}
+
+\begin{itemize}
+    \item In the Ping-pong example, agents are aware of their respective names, \alert{by construction}
+    
+    \vspace{.3cm}
+    
+    \item This is ok for examples, but \alert{it is not the case} in real world Distributed Systems
+    
+    \vspace{.3cm}
+    
+    \item There, a \alert{white pages} service is usually in place, letting \alert{discover} their peers, \alert{dynamically} 
+    
+\end{itemize}
+
+\vspace{.3cm}
+
+\begin{block}{TODO}
+    Try editing the Ping \& Pong agents in such a way that they are able to \alert{discover} each others dynamically, \alert{before} starting the ping-pong protocol
+\end{block}
+
+\framebreak
+
+\begin{exampleblock}{Some advices}
+    \begin{itemize}
+        \item What about employing a \alert{tuple space} as white pages?
+        
+        \item Consider exploiting ``Negative Lookaheads'' in regular expressions
+        %
+        \begin{itemize}
+            \item[ie] \url{https://www.regular-expressions.info/lookaround.html}
+            \item[eg] \url{https://regex101.com/r/66NTyD/1}
+            \item[eg] class \texttt{sd.lab.linda.textual.\alert{TestNegatedTemplate}}
+        \end{itemize}
+    \end{itemize}
+\end{exampleblock}
 
 \end{frame}
 
