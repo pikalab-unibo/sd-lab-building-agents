@@ -8,7 +8,7 @@ class Sender extends BaseAgent {
   public void onRun() throws Exception {
     getEnvironment()
         .getTextualSpace("someTS")
-        .out("message\\{.*?\\}") // OUT
+        .out("message{hello}") // OUT
         .thenApplyAsync(t -> stop(), getEngine());
     pause();
   }
