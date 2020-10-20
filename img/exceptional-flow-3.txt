@@ -16,6 +16,11 @@ A -> A : ""**throw //E//**""
 
 A -> A : ""onUncaughtError(**//E//**)""
 
+A -> A : ""restart()""
+
+
+A -> A : ""onBegin()""
+
 loop
 A -> A : ""onRun()""
 end

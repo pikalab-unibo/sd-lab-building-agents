@@ -131,13 +131,23 @@
 	\bigskip
 	
 	\begin{block}{Agent}
-	    We consider an Agent as an object (data + behaviour) coming with its own \alert{internal scheduler} aimed at executing an arbitrary amount of \alert{behaviours} concurrently
+	    We consider an Agent as a \alert{named} object (data + behaviour) coming with its own \alert{internal scheduler} aimed at executing an arbitrary amount of \alert{behaviours} concurrently
 	\end{block}
 	
 	\bigskip
 	
 	\begin{block}{Agents' Finite State Machine (FSM)}
 		We assume each Agent is moved by an internal FSM aimed supporting life-cycle management operations such as: \emph{start}, \emph{restart}, \emph{pause}, \emph{resume}, \emph{stop}	
+	\end{block}
+
+	\bigskip
+	
+	\begin{block}{Agent Identifier (AID)}
+		We assume each Agent is uniquely identified by an AID:
+		%
+		\begin{center}
+			AID = agent name + environment name
+		\end{center}
 	\end{block}
 	
 	\bigskip
@@ -190,134 +200,167 @@
 	
 \end{frame}
 
+\subsection{Agent Identifiers}
+
+\begin{frame}{\texttt{AID} Class}
+	
+	\lstinputlisting{code/AID.java}
+	
+\end{frame}
+
+\begin{frame}{\texttt{AID} Class -- Design Rationale}
+	
+	\begin{itemize}
+		
+		\item In the general case, agents are identified by two names:
+		%
+		\begin{itemize}
+			\item the agent's \alert{local} name
+			\item the name of the environment hosting the agent
+		\end{itemize}
+	
+		\vfill
+		
+		\item In some cases, the environment name maybe unknown, thus missing
+		%
+		\begin{itemize}
+			\item in this case, we say the \texttt{AID} is \alert{local}
+			\item otherwise, we say the \texttt{AID} is \alert{full}
+		\end{itemize}
+	
+		\vfill
+		
+		\item Full \texttt{AID} can be created via the \texttt{AID.full} \alert{static} method
+		
+		\vfill
+		
+		\item Local \texttt{AID} can be created via the \texttt{AID.local} \alert{static} method
+		
+		\vfill
+		
+		\item The \texttt{AID.parse} \alert{static} method can be used to parse \texttt{AID} from well formed strings in the form: \texttt{"localName@environmentName"}
+	\end{itemize}
+	
+\end{frame}
+
 \subsection{Environment}
 
-\begin{frame}[allowframebreaks]{Environment -- Interface}
+\begin{frame}[allowframebreaks]{Environment Interface}
     
     \lstinputlisting{code/Environment.java}
     
 \end{frame}
 
-\begin{frame}{Environment -- Design Rationale}
+\begin{frame}{\texttt{Environment} Interface -- Design Rationale}
     
     \begin{itemize}
-        \item All agents from within the same environment \alert{share} the same \texttt{ExecutorService}
+    		
+    	\item Given some subtype \texttt{A} of \texttt{AgentFSM}, an environment can only host agents whose type is \texttt{A}
+    	%
+    	\begin{itemize}
+    		\item the actual type \texttt{A} is specified at instantiation time
+    	\end{itemize}
+    
+	    \vfill
+	    
+	    \item Environments have their own unique name
+    	
+    	\vfill
+    	
+    	\item The set of \texttt{AID} currently hosted by the environment can be retrieved via the \alert{\texttt{getAgents}} method
+    	
+    	\vfill
+        
+        \item Via environments, agents' FSM can either
         %
         \begin{itemize}
-            \item we call it \alert{engine} since it is responsible for all computations actually occurring within the system
-        \end{itemize}
-        
-        \vfill
-        
-        \item Shared \texttt{TextualSpace}s are available \alert{to all agents} within the environment
-        %
-        \begin{itemize}
-            \item each agent can access each tuple space through its \alert{name}
-            \item each possible name is \alert{virtually} bound to a tuple space
+            \item be created outside the environment and then join it via the \alert{\texttt{register}} method
             %
-            \begin{itemize}
-                \item instances of tuple spaces are \alert{actually created} upon first usage
-            \end{itemize}
+            \item be created as part of the environment, via the \alert{\texttt{create}} method
         \end{itemize}
-        
-        \vfill
-        
-        \item Conventions on how to use tuple space names or how to structure tuples is up to the agents
-        
-        \vfill
-        
-        \item Agents can either
-        %
-        \begin{itemize}
-            \item be created outside the environment and then join it thorugh \alert{registration}
-            %
-            \item be created as part of the environment
-        \end{itemize}
+    
+    	\vfill
+    	
+    	\item Users can block until all agents terminated via the \alert{\texttt{awaitAllAgents}} method
         
     \end{itemize}
     
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Environment -- Implementations}
+\begin{frame}[allowframebreaks]{\texttt{Environment} Interface -- Implementations}
     
     \begin{block}{\texttt{sd.lab.agency.impl.\textit{AbstractEnvironment}}}
-        Provides common facilities for agents' initialisation and registration
+        Provides common facilities for agents' initialisation and registration, which can be reused by sub-classes
     \end{block}
     
-    \vfill
+    \bigskip
     
-    \begin{exampleblock}{\texttt{sd.lab.agency.impl.\textit{LocalEnvironment}}}
-        Extends the \texttt{AbstractEnvironment} in such a way that the \texttt{TextualSpace}s created by \texttt{getTextualSpace(String)} are \alert{local} and backed by the same \texttt{ExecutorService} returned by \texttt{getEngine()}
+    \begin{exampleblock}{\texttt{sd.lab.agency.impl.\textit{MultiThreadedEnvironment}}}
+        \begin{itemize}
+			\item A particular sort of environment where each agent is executed on its own thread
+			\item Instances of \texttt{MultiThreadedEnvironment} can be instantiated via the \alert{\texttt{Environment.multiThreaded}} static method
+			\item This will be implemented and used in exercise \labN{}-1
+        \end{itemize}
     \end{exampleblock}
+
+	\bigskip
+
+	\begin{exampleblock}{\texttt{sd.lab.agency.impl.\textit{ExecutorBasedEnvironment}}}
+		\begin{itemize}
+			\item A particular sort of environment where all agents are executed on the same executor service
+			\item Instances of \texttt{ExecutorBasedEnvironment} can be instantiated via the \alert{\texttt{Environment.executorBased}} static method
+			\item This will be implemented and used in exercise \labN{}-2 (which is \emph{optional})
+		\end{itemize}
+	\end{exampleblock}
     
-    \vfill
+    \bigskip
     
     \begin{alertblock}{(Spoiler Alert) \textbf{Distributed} Environment}
-        Hides distribution behind the same interfaces used for the local implementation
+        \begin{itemize}
+        	\item Supports the interaction among agents running on different machines
+        	\item Will be designed and implemented in future lectures
+        \end{itemize}
     \end{alertblock}
     
 \end{frame}
 
 
-\subsection{Agent}
+\subsection{Agent FSM}
 
-\begin{frame}[allowframebreaks]{Agent -- Interface}
+\begin{frame}[allowframebreaks]{\texttt{AgentFSM} Interface}
     
-    \lstinputlisting{code/Agent.java}
-    
-    \lstinputlisting{code/AndThen.java}
+    \lstinputlisting{code/AgentFSM.java}
     
 \end{frame}
 
-\begin{frame}{Agent -- Naming}
-
-For practical reasons, agents have two names:
-%
-\vfill
-%
-\begin{description}
-    \item[local name] can be any string, but it must be \alert{unique} within the environment the agent is situated into
-    
-    \vfill
-    
-    \item[full name] = local name + environment name
-    
-\end{description}
-
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Agent -- Rationale}
+\begin{frame}[allowframebreaks]{\texttt{AgentFSM} Interface -- Rationale}
     
     % \begin{block}{Agent VS User perspectives}
     %     The functioning of agents can be described and understood according to two different perspectives:
         
     % \end{block}
     
-    Expected functioning of all objects of type \alert{\texttt{Agent}}:
+    Expected functioning of all objects of type \alert{\texttt{AgentFSM}}:
     %
-    \vspace{.5cm}
+    \bigskip
     %
     \begin{itemize}
-        \item the agent is created by some other entity as an ordinary Java object
+        \item an FSM is created by some other entity as an ordinary Java object
         
-        \vspace{.5cm}
+        \bigskip
         
-        \item the agent may be started from outside by means of the \texttt{Agent::\alert{start()}} method 
-        %
-        \begin{itemize}
-            \item this is the only tolerated exception to control encapsulation
-        \end{itemize}
+        \item it may be started from outside by means of the \texttt{\alert{start()}} method 
         
-        \vspace{.5cm}
+        \bigskip
         
         \item once started, the following things should happen:
         %
         \begin{enumerate}
-            \item the \texttt{Agent::\alert{onBegin()}} callback is executed \alert{just once}
+            \item the \texttt{\alert{onBegin()}} callback is executed \alert{just once}
             
-            \item \alert{after} that, the \texttt{Agent::\alert{onRun()}} method is executed an \alert{unlimited} amount of times, sequentially
+            \item \alert{after} that, the \texttt{\alert{onRun()}} method is executed an \alert{unlimited} amount of times, sequentially
     
-            \item the sequence of executions of \texttt{onRun()} can only be interrupted by the agent itself by calling the \texttt{Agent::\alert{stop()}} method inside its \texttt{onBegin()} or \texttt{onRun()} callbacks
+            \item the sequence of executions of \texttt{onRun()} can only be interrupted by the agent itself by calling the \texttt{\alert{stop()}} method inside its \texttt{onBegin()} or \texttt{onRun()} callbacks
         \end{enumerate}
         
         \framebreak
@@ -351,9 +394,9 @@ For practical reasons, agents have two names:
         %     \item[\texttt{PAUSE}] | the sequence of \texttt{onRun()} is paused
         % \end{description}
         
-        \item after that, the agent \alert{terminates}---which means that all entities which possibly invoked the \texttt{Agent::\alert{await()}} method, can now resume their computation
+        \item after that, the agent \alert{terminates}---which means that all entities which possibly invoked the \texttt{\alert{await()}} method, can now resume their computation
         
-        \vspace{.3cm}
+        \bigskip
         
         \item within its \texttt{onBegin()}, \texttt{onRun()}, or \texttt{onEnd()} methods, an agent can call the following methods affecting its own control flow and, in particular, the sequence of \texttt{on*()} methods executions:
         %
@@ -371,43 +414,33 @@ For practical reasons, agents have two names:
         
         \item \alert{no uncaught exception} should be able to break the aforementioned workflow
         
-        \vspace{.3cm}
+        \bigskip
         
-        \item to this end, \texttt{Agent::\alert{onUncaughtError(Exception)}} method is executed for each excpetion which is not caught within the \texttt{onBegin()}, \texttt{onRun()}, or \texttt{onEnd()} methods
+        \item to this end, \texttt{\alert{onUncaughtError(Exception)}} callback is executed for each exception which is not caught within the \texttt{onBegin()}, \texttt{onRun()}, or \texttt{onEnd()} methods
         
-        \vspace{.3cm}
+        \bigskip
         
-        \item the \texttt{onUncaughtError(Exception)} method returns an object of type \texttt{AndThen} stating what should happen next:
+        \item after the \texttt{onUncaughtError(Exception)} callback is executed, the aforementioned workflow continues as if the exception didn't occurred (i.e. the series of \texttt{onRun()} is resumed)
         %
         \begin{itemize}
-            \item in case \texttt{AndThen.\alert{CONTINUE}} is returned, the aforementioned workflow continues as if the exception didn't occurred
-            
-            \item in case \texttt{AndThen.\alert{STOP}} is returned, the aforementioned workflow is interrupted as if \texttt{stop()} was invoked
-            
-            \item in case \texttt{AndThen.\alert{PAUSE}} is returned, the aforementioned workflow is interrupted as if \texttt{pause()} was invoked
-            
-            \item in case \texttt{AndThen.\alert{RESTART}} is returned, the aforementioned workflow is restarted as if \texttt{restart()} was invoked
-        \end{itemize}
-        
-        
+            \item unless the agent calls some life-cycle control method within the \texttt{onUncaughtError(Exception)} callback
+        \end{itemize}      
     \end{itemize}
-    
-    
 \end{frame}
 
 \begin{frame}{External VS internal API}
 
 \begin{itemize}
-    \item The \texttt{Agent} interface is actually the union of two API targetting different usages
+    \item \texttt{AgentFSM} is actually the union of two API targetting different usages
     
     \vfill
     
     \item The \alert{external} API comprehends methods which are to be called \alert{from outside} the agent
     %
     \begin{itemize}
-        \item[eg] method \texttt{Agent::\alert{start()}}
-        \item[eg] method \texttt{Agent::\alert{await()}}
-        \item[eg] method \texttt{Agent::\alert{resume()}}
+        \item[eg] method \texttt{\alert{start()}}
+        \item[eg] method \texttt{\alert{await()}}
+        \item[eg] method \texttt{\alert{resume()}}
     \end{itemize}
     
     \vfill
@@ -415,15 +448,15 @@ For practical reasons, agents have two names:
     \item The \alert{internal} API comprehends methods which are to be called \alert{from within} the agent itself
     %
     \begin{itemize}
-        \item[eg] method \texttt{Agent::\alert{stop()}}
-        \item[eg] method \texttt{Agent::\alert{pause()}}
-        \item[eg] method \texttt{Agent::\alert{pause()}}
-        \item[eg] method \texttt{Agent::\alert{restart()}}
+        \item[eg] method \texttt{\alert{stop()}}
+        \item[eg] method \texttt{\alert{pause()}}
+        \item[eg] method \texttt{\alert{pause()}}
+        \item[eg] method \texttt{\alert{restart()}}
     \end{itemize}
     
     \vfill
     
-    \item Briefly speking, methods composing the \alert{internal} API can be called by agent implementors \alert{only} within the \texttt{on*()} callbacks
+    \item Briefly speking, methods composing the \alert{internal} API can be called by agent implementors, \alert{only} within the \texttt{on*()} callbacks
     %
     \begin{itemize}
         \item calling them elsewhere may lead to unexpected \& unpredicatable behaviour
@@ -432,7 +465,7 @@ For practical reasons, agents have two names:
 
 \end{frame}
 
-\subsection{Examples of valid scenarios}
+\subsubsection{Examples of valid scenarios}
 
 \begin{frame}{Normal Flow}\centering
     \includegraphics[height=.8\textheight]{img/normal-flow.pdf}
@@ -442,104 +475,95 @@ For practical reasons, agents have two names:
     \includegraphics[height=.8\textheight]{img/paused-flow.pdf}
 \end{frame}
 
-\begin{frame}{Uncaught Exceptions}\centering
-    \includegraphics[height=.8\textheight]{img/exceptional-flow-1.pdf}
-    \hspace{.5cm}
-    \includegraphics[height=.8\textheight]{img/exceptional-flow-2.pdf}
-\end{frame}
-
 \begin{frame}{Restart}\centering
-    \includegraphics[height=.8\textheight]{img/restarted-flow.pdf}
+	\includegraphics[height=.8\textheight]{img/restarted-flow.pdf}
 \end{frame}
 
-\begin{frame}{UsageExample}\centering
-    \includegraphics[height=.8\textheight]{img/restarted-flow.pdf}
+\begin{frame}[allowframebreaks]{Uncaught Exceptions}
+    \begin{center}
+    	\includegraphics[height=.8\textheight]{img/exceptional-flow-1.pdf}
+    \end{center}
+    
+    \begin{center}
+    	\includegraphics[height=.8\textheight]{img/exceptional-flow-2.pdf}
+    \end{center}
+    
+    \begin{center}
+    	\includegraphics[height=.8\textheight]{img/exceptional-flow-3.pdf}
+    \end{center}
 \end{frame}
 
-\subsection{Why is this cool}
-
-\begin{frame}{What's the purpose of this architecture?}
-
-\begin{itemize}
-    \item This is a relatively compact architecture that will be the basis of several mechanisms
-    
-    \vfill
-    
-    \item In particular, it enables several agents to compute and interact in a \alert{non-blocking} way
-    
-    \vfill
-    
-    \item For instance in the next slide, 3 agents sharing the same \alert{single-threaded} executor service, are capable to perform multiple \alert{suspensive} operations without the whole system getting stuck
-\end{itemize}
-
-\end{frame}
+\subsubsection{Usage Example}
 
 \begin{frame}[allowframebreaks]{Example}
-    \lstinputlisting{code/Sender.java}
+    Setting up the environment:
     %
-    \hint{Consider reasing the documentation for \href{https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/concurrent/CompletableFuture.html}{\texttt{CompletableFuture::\alert{thenApplyAsync}}}}
+    \lstinputlisting{code/ExampleEnvironment.java}
     
-    \lstinputlisting{code/Receiver.java}
+    \framebreak
     
-    \lstinputlisting{code/SenderReceiver.java}
-    
-    
+    The agent FSM:
     %
-    % \begin{columns}
-    %     \begin{column}{.49\linewidth}
-        
-    %     \end{column}
-    %     \hfill
-    %     \begin{column}{.49\linewidth}
-        
-    %     \end{column}
-    % \end{columns}
+    \lstinputlisting{code/ExampleAgentFSM.java}
+    
+    Expected logs:
+    %
+    \begin{itemize}
+    	\item[$\rightarrow$] 0, 1, 2, 3, 4, 5, 6
+    \end{itemize}
 \end{frame}
 
-\subsection{Agent FSA}
-
-\begin{frame}[allowframebreaks]{Agents' Finite State Automaton (FSA)}
+\begin{frame}[allowframebreaks]{Agent FSM state diagram}
 
     \begin{itemize}
-        \item The agents' functioning just described can be modelled through a FSA
+        \item The agents' functioning just described can be modelled through a state diagram
         
-        \vspace{0.3cm}
+        \bigskip
         
-        \item Such FSA would be composed by $5+1$ states:
+        \item In any given moment, the FSM may be in any of $5+1$ states:
         %
         \begin{description}
-            \item[CREATED] | the agent has been instantiated but not yet started
+            \item[\texttt{CREATED}] | the agent has been instantiated but not yet started
             
-            \item[STARTED] | after the \texttt{start()} method has been called
+            \item[\texttt{STARTED}] | after the \texttt{start()} method has been called
             
-            \item[RUNNING] | after the \texttt{onBegin()} callback has been executed
+            \item[\texttt{RUNNING}] | after the \texttt{onBegin()} callback has been executed
             
-            \item[PAUSED] | after the \texttt{pause()} method has been called
+            \item[\texttt{PAUSED}] | after the \texttt{pause()} method has been called
             
-            \item[STOPPED] | after the \texttt{stop()} method has been called
+            \item[\texttt{STOPPED}] | after the \texttt{stop()} method has been called
             
             \item[terminated] | after the \texttt{onStop()} callback has been executed
         \end{description}
+    
+    	\bigskip
+    	
+    	\item Such states are represented by the \texttt{sd.lab.agency.fsm.impl.\alert{State}} enum
         
         \framebreak
-        
-        \item State transitions imply consuming some value of type \texttt{\alert{AndThen}} and executing a callback
-        
-        \vspace{.3cm}
         
         \item State transition are usually provoked by invocations of the \alert{control methods}
         %
         \begin{itemize}
-            \item[ie] the \texttt{start()}, \texttt{stop()}, \texttt{restart()}, \texttt{pause()}, or \texttt{resume()} methods
+        	\item i.e., the \texttt{start()}, \texttt{stop()}, \texttt{restart()}, \texttt{pause()}, or \texttt{resume()} methods
+        \end{itemize}
+    
+    	\bigskip
+        
+        \item Such methods feed the FSM with values of type \texttt{sd.lab.agency.fsm.impl.\alert{Operation}}
+        %
+        \begin{itemize}
+        	\item i.e., \texttt{CONTINUE}, \texttt{RESTART}, \texttt{PAUSE}, or \texttt{STOP} 
+        	\item if no control method is called within a callback, \texttt{\alert{CONTINUE}} is fed to the FSM, by default
         \end{itemize}
         
-        \vspace{.3cm}
+        \bigskip
         
-        \item We say such methods \alert{feed} input values (i.e. instances of \texttt{AndThen}) to the FSA
-        
-        \vspace{.3cm}
-        
-        \item If no \alert{control method} is called within a callback, \texttt{AndThen.\alert{CONTINUE}} is feeded to the FSA, by default
+        \item State transition of the FSM provoke the invocation of callbacks
+         %
+        \begin{itemize}
+        	\item i.e., \texttt{onBegin()}, \texttt{onRun()}, \texttt{onEnd()}, or \texttt{onUncaughtException(...)}
+        \end{itemize}
     \end{itemize}
     
     \framebreak

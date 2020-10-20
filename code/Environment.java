@@ -1,30 +1,25 @@
-public interface Environment {
+interface Environment<A extends AgentFSM> {
 
   // Environments have a name
   String getName();
   
   // Each environment wraps a set of agents
-  Set<Agent> getAgents();
-  
-  // Shared textual spaces can be retrieved by names
-  TextualSpace getTextualSpace(String name);
-  
-  // A shared ExecutorService is exposed for agents
-  ExecutorService getEngine();
+  Set<AID> getAgents();
 
   // Existing agents can join the environment
-  <A extends Agent> A registerAgent(A agent);
+  A registerAgent(A agent);
   
   // New agents can be created within the environment
-  <A extends Agent> A createAgent(Class<A> clazz, String name, Object... args);
-
+  A createAgent(Class<A> clazz, String name, Object... args);
+%*\framebreak*)
 
   // Users can block until all agents are done
-  Environment awaitAllAgentsStop(Duration duration) throws ...;
-
-  // Gracefully shutdown the executor service
-  Environment shutdown();
+  void awaitAllAgents(Duration duration);
   
-  // Users can block until the executor service is over
-  Environment awaitShutdown(Duration duration) throws ...;
+  
+  // Creates a new environment where each agent has its own thread
+  static Environment<A> multiThreaded(String name)
+  
+  // Creates a new environment where all agent run on the same executor service
+  static Environment<A> executorBased(String name)
 }
