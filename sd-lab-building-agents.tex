@@ -12,7 +12,7 @@
 \newcommand{\labRepo}{\labGroup/lab-\labN}
 
 
-\title[L\labN{} -- Building Agents]{Building Agents from Scratch}
+\title[L\labN{} -- Building Agents]{L\labN{} -- Building Agents from Scratch}
 %
 \subtitle[SD]{Distributed Systems / Technologies}
 %
@@ -61,9 +61,9 @@
 			\item we will build a simple framework for MAS execution $\ldots$
 			\item $\ldots$ to be extended in future lectures with interaction- and distribution-related features
 		\end{itemize}
-		
+
 		\bigskip
-		
+
 		\item Building an agent framework requires defining, at least:
 		%
 		\begin{enumerate}
@@ -86,26 +86,26 @@
 		\begin{center}
 			\url{\labRepo}
 		\end{center}
-		
+
 		\vfill
-		
+
 		\item Clone it on your machine using Git
 		%
 		\begin{itemize}
 		    \item[\$] \texttt{git clone \textit{<repo URL>}}
 		\end{itemize}
-		
+
 		\vfill
-		
+
 		\item Even if a minimal environment simply relying on a text editor + Gradle is sufficient for this lab, we kindly suggest to import the cloned repository into some IDE, e.g. IntelliJ Idea or Eclipse
 		%
 		%
 		\begin{itemize}
 		    \item in case of problems in importing the project on IntelliJ, try to downgrade the gradle wrapper
 		\end{itemize}
-		
+
 		\vfill
-		
+
 		\item In order to be able to submit your exercises, please ensure you requested access to the \href{\labGroup}{GitLab group of the course}
 	\end{itemize}
 
@@ -123,25 +123,25 @@
 	\end{block}
 
 	\bigskip
-	
+
 	\begin{block}{Environment}
 		We consider an Environment as a container of agents, exposing \emph{shared} facilities aimed at \alert{supporting} the agents' \alert{creation}, and \alert{interaction}
 	\end{block}
-	
+
 	\bigskip
-	
+
 	\begin{block}{Agent}
 	    We consider an Agent as a \alert{named} object (data + behaviour) coming with its own \alert{internal scheduler} aimed at executing an arbitrary amount of \alert{behaviours} concurrently
 	\end{block}
-	
+
 	\bigskip
-	
+
 	\begin{block}{Agents' Finite State Machine (FSM)}
-		We assume each Agent is moved by an internal FSM aimed supporting life-cycle management operations such as: \emph{start}, \emph{restart}, \emph{pause}, \emph{resume}, \emph{stop}	
+		We assume each Agent is moved by an internal FSM aimed supporting life-cycle management operations such as: \emph{start}, \emph{restart}, \emph{pause}, \emph{resume}, \emph{stop}
 	\end{block}
 
 	\bigskip
-	
+
 	\begin{block}{Agent Identifier (AID)}
 		We assume each Agent is uniquely identified by an AID:
 		%
@@ -149,15 +149,15 @@
 			AID = agent name + environment name
 		\end{center}
 	\end{block}
-	
+
 	\bigskip
-	
+
 	\begin{block}{Behaviours}
 		We consider a Behaviour as an atomic or composite action an agent may carry on, concurrently (w.r.t. other Behaviours)
 	\end{block}
-	
+
 	\bigskip
-	
+
 	\begin{block}{Agents' Interaction}
 		Any means letting an agent affect the operation of other agents.
 		Can be achieved in several ways (message-passing, shared-memory, stigmergy, etc).
@@ -173,104 +173,104 @@
 
 \begin{frame}%[allowframebreaks]
 	\frametitle{Activity Overview}
-	
+
 	For each notion in the aforementioned meta-model, we will:
 	%
 	\vfill
 	%
 	\begin{enumerate}
 		\item draw the general design
-		
+
 		\vfill
-		
+
 		\item propose a minimal Java interface
-		
+
 		\vfill
-		
+
 		\item sketch the architecture
-		
+
 		\vfill
-		
+
 		\item describe the implementation stub
-		
+
 		\vfill
-		
+
 		\item complete the implementation via exercises
 	\end{enumerate}
-	
+
 \end{frame}
 
 \subsection{Agent Identifiers}
 
 \begin{frame}{\texttt{AID} Class}
-	
+
 	\lstinputlisting{code/AID.java}
-	
+
 \end{frame}
 
 \begin{frame}{\texttt{AID} Class -- Design Rationale}
-	
+
 	\begin{itemize}
-		
+
 		\item In the general case, agents are identified by two names:
 		%
 		\begin{itemize}
 			\item the agent's \alert{local} name
 			\item the name of the environment hosting the agent
 		\end{itemize}
-	
+
 		\vfill
-		
+
 		\item In some cases, the environment name maybe unknown, thus missing
 		%
 		\begin{itemize}
 			\item in this case, we say the \texttt{AID} is \alert{local}
 			\item otherwise, we say the \texttt{AID} is \alert{full}
 		\end{itemize}
-	
+
 		\vfill
-		
+
 		\item Full \texttt{AID} can be created via the \texttt{AID.full} \alert{static} method
-		
+
 		\vfill
-		
+
 		\item Local \texttt{AID} can be created via the \texttt{AID.local} \alert{static} method
-		
+
 		\vfill
-		
+
 		\item The \texttt{AID.parse} \alert{static} method can be used to parse \texttt{AID} from well formed strings in the form: \texttt{"localName@environmentName"}
 	\end{itemize}
-	
+
 \end{frame}
 
 \subsection{Environment}
 
 \begin{frame}[allowframebreaks]{Environment Interface}
-    
+
     \lstinputlisting{code/Environment.java}
-    
+
 \end{frame}
 
 \begin{frame}{\texttt{Environment} Interface -- Design Rationale}
-    
+
     \begin{itemize}
-    		
+
     	\item Given some subtype \texttt{A} of \texttt{AgentFSM}, an environment can only host agents whose type is \texttt{A}
     	%
     	\begin{itemize}
     		\item the actual type \texttt{A} is specified at instantiation time
     	\end{itemize}
-    
+
 	    \vfill
-	    
+
 	    \item Environments have their own unique name
-    	
+
     	\vfill
-    	
+
     	\item The set of \texttt{AID} currently hosted by the environment can be retrieved via the \alert{\texttt{getAgents}} method
-    	
+
     	\vfill
-        
+
         \item Via environments, agents' FSM can either
         %
         \begin{itemize}
@@ -278,23 +278,23 @@
             %
             \item be created as part of the environment, via the \alert{\texttt{create}} method
         \end{itemize}
-    
+
     	\vfill
-    	
+
     	\item Users can block until all agents terminated via the \alert{\texttt{awaitAllAgents}} method
-        
+
     \end{itemize}
-    
+
 \end{frame}
 
 \begin{frame}[allowframebreaks]{\texttt{Environment} Interface -- Implementations}
-    
+
     \begin{block}{\texttt{sd.lab.agency.impl.\textit{AbstractEnvironment}}}
         Provides common facilities for agents' initialisation and registration, which can be reused by sub-classes
     \end{block}
-    
+
     \bigskip
-    
+
     \begin{exampleblock}{\texttt{sd.lab.agency.impl.\textit{MultiThreadedEnvironment}}}
         \begin{itemize}
 			\item A particular sort of environment where each agent is executed on its own thread
@@ -312,119 +312,119 @@
 			\item This will be implemented and used in exercise \labN{}-2 (which is \emph{optional})
 		\end{itemize}
 	\end{exampleblock}
-    
+
     \bigskip
-    
+
     \begin{alertblock}{(Spoiler Alert) \textbf{Distributed} Environment}
         \begin{itemize}
         	\item Supports the interaction among agents running on different machines
         	\item Will be designed and implemented in future lectures
         \end{itemize}
     \end{alertblock}
-    
+
 \end{frame}
 
 
 \subsection{Agent FSM}
 
 \begin{frame}[allowframebreaks]{\texttt{AgentFSM} Interface}
-    
+
     \lstinputlisting{code/AgentFSM.java}
-    
+
 \end{frame}
 
 \begin{frame}[allowframebreaks]{\texttt{AgentFSM} Interface -- Rationale}
-    
+
     % \begin{block}{Agent VS User perspectives}
     %     The functioning of agents can be described and understood according to two different perspectives:
-        
+
     % \end{block}
-    
+
     Expected functioning of all objects of type \alert{\texttt{AgentFSM}}:
     %
     \bigskip
     %
     \begin{itemize}
         \item an FSM is created by some other entity as an ordinary Java object
-        
+
         \bigskip
-        
-        \item it may be started from outside by means of the \texttt{\alert{start()}} method 
-        
+
+        \item it may be started from outside by means of the \texttt{\alert{start()}} method
+
         \bigskip
-        
+
         \item once started, the following things should happen:
         %
         \begin{enumerate}
             \item the \texttt{\alert{onBegin()}} callback is executed \alert{just once}
-            
+
             \item \alert{after} that, the \texttt{\alert{onRun()}} method is executed an \alert{unlimited} amount of times, sequentially
-    
+
             \item the sequence of executions of \texttt{onRun()} can only be interrupted by the agent itself by calling the \texttt{\alert{stop()}} method inside its \texttt{onBegin()} or \texttt{onRun()} callbacks
         \end{enumerate}
-        
+
         \framebreak
-        
+
         % \item if the agent calls its \texttt{Agent::\alert{pause()}} method, the sequence of \texttt{onRun()} is interrupted as well
-        
+
         % \vspace{.5cm}
-        
-        % \item however, if some external entity calls the 
+
+        % \item however, if some external entity calls the
         % \texttt{Agent::\alert{resume()}} method on a paused agents, the sequence of \texttt{onRun()} is resumed \alert{from where it had been interrupted}
-        
+
         % \vspace{.5cm}
-        
+
         % \item if the agent calls its \texttt{Agent::\alert{restart()}} method, the sequence of \texttt{onRun()} is restarted---and the \texttt{onBegin()} method is executed one more time
-        
+
         % \vspace{.5cm}
-        
+
         % \item finally, external entities can wait for an agent's termination by means of the \texttt{Agent::\alert{await()}} method and its overloads
-        
+
         % \framebreak
-        
+
         % \item in any scenario, if some \alert{uncaught exception} is thrown within the \texttt{onBegin()} or \texttt{onRun()} methods, the \texttt{Agent::\alert{onUncaughtError(Exception)}} callback is called
-        
+
         % \vspace{.5cm}
-        
+
         % \item what happens next depends on the value returned by the \texttt{onUncaughtError(Exception)} callback, which is of type \alert{\texttt{AndThen}}
         % %
         % \begin{description}
         %     \item[\texttt{CONTINUE}] | the exception is ignored and the sequence of \texttt{onRun()} is unaffected
-            
+
         %     \item[\texttt{PAUSE}] | the sequence of \texttt{onRun()} is paused
         % \end{description}
-        
+
         \item after that, the agent \alert{terminates}---which means that all entities which possibly invoked the \texttt{\alert{await()}} method, can now resume their computation
-        
+
         \bigskip
-        
+
         \item within its \texttt{onBegin()}, \texttt{onRun()}, or \texttt{onEnd()} methods, an agent can call the following methods affecting its own control flow and, in particular, the sequence of \texttt{on*()} methods executions:
         %
         \begin{description}\small
             \item[\texttt{stop()}] states that the next method to be executed should be \texttt{onEnd()}
-            
+
             \item[\texttt{restart()}] states that the next method to be executed should be \texttt{onBegin()}
-            
+
             \item[\texttt{pause()}] states that no method should be executed next, until \texttt{resume()} is called
-            
+
             \item[\texttt{resume()}] states that the sequence of \texttt{on*()} methods executions should be resumed starting from where it was interrupted by the \texttt{pause()}
         \end{description}
-        
+
         \framebreak
-        
+
         \item \alert{no uncaught exception} should be able to break the aforementioned workflow
-        
+
         \bigskip
-        
+
         \item to this end, \texttt{\alert{onUncaughtError(Exception)}} callback is executed for each exception which is not caught within the \texttt{onBegin()}, \texttt{onRun()}, or \texttt{onEnd()} methods
-        
+
         \bigskip
-        
+
         \item after the \texttt{onUncaughtError(Exception)} callback is executed, the aforementioned workflow continues as if the exception didn't occurred (i.e. the series of \texttt{onRun()} is resumed)
         %
         \begin{itemize}
             \item unless the agent calls some life-cycle control method within the \texttt{onUncaughtError(Exception)} callback
-        \end{itemize}      
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -432,9 +432,9 @@
 
 \begin{itemize}
     \item \texttt{AgentFSM} is actually the union of two API targetting different usages
-    
+
     \vfill
-    
+
     \item The \alert{external} API comprehends methods which are to be called \alert{from outside} the agent
     %
     \begin{itemize}
@@ -442,9 +442,9 @@
         \item[eg] method \texttt{\alert{await()}}
         \item[eg] method \texttt{\alert{resume()}}
     \end{itemize}
-    
+
     \vfill
-    
+
     \item The \alert{internal} API comprehends methods which are to be called \alert{from within} the agent itself
     %
     \begin{itemize}
@@ -453,9 +453,9 @@
         \item[eg] method \texttt{\alert{pause()}}
         \item[eg] method \texttt{\alert{restart()}}
     \end{itemize}
-    
+
     \vfill
-    
+
     \item Briefly speking, methods composing the \alert{internal} API can be called by agent implementors, \alert{only} within the \texttt{on*()} callbacks
     %
     \begin{itemize}
@@ -483,11 +483,11 @@
     \begin{center}
     	\includegraphics[height=.8\textheight]{img/exceptional-flow-1.pdf}
     \end{center}
-    
+
     \begin{center}
     	\includegraphics[height=.8\textheight]{img/exceptional-flow-2.pdf}
     \end{center}
-    
+
     \begin{center}
     	\includegraphics[height=.8\textheight]{img/exceptional-flow-3.pdf}
     \end{center}
@@ -499,13 +499,13 @@
     Setting up the environment:
     %
     \lstinputlisting{code/ExampleEnvironment.java}
-    
+
     \framebreak
-    
+
     The agent FSM:
     %
     \lstinputlisting{code/ExampleAgentFSM.java}
-    
+
     Expected logs:
     %
     \begin{itemize}
@@ -517,61 +517,66 @@
 
     \begin{itemize}
         \item The agents' functioning just described can be modelled through a state diagram
-        
+
         \bigskip
-        
+
         \item In any given moment, the FSM may be in any of $5+1$ states:
         %
         \begin{description}
             \item[\texttt{CREATED}] | the agent has been instantiated but not yet started
-            
+
             \item[\texttt{STARTED}] | after the \texttt{start()} method has been called
-            
+
             \item[\texttt{RUNNING}] | after the \texttt{onBegin()} callback has been executed
-            
+
             \item[\texttt{PAUSED}] | after the \texttt{pause()} method has been called
-            
+
             \item[\texttt{STOPPED}] | after the \texttt{stop()} method has been called
-            
+
             \item[terminated] | after the \texttt{onStop()} callback has been executed
         \end{description}
-    
+
     	\bigskip
-    	
+
     	\item Such states are represented by the \texttt{sd.lab.agency.fsm.impl.\alert{State}} enum
-        
+
         \framebreak
-        
+
         \item State transition are usually provoked by invocations of the \alert{control methods}
         %
         \begin{itemize}
         	\item i.e., the \texttt{start()}, \texttt{stop()}, \texttt{restart()}, \texttt{pause()}, or \texttt{resume()} methods
         \end{itemize}
-    
-    	\bigskip
-        
-        \item Such methods feed the FSM with values of type \texttt{sd.lab.agency.fsm.impl.\alert{Operation}}
-        %
-        \begin{itemize}
-        	\item i.e., \texttt{CONTINUE}, \texttt{RESTART}, \texttt{PAUSE}, or \texttt{STOP} 
-        	\item if no control method is called within a callback, \texttt{\alert{CONTINUE}} is fed to the FSM, by default
-        \end{itemize}
-        
+
+%    	\bigskip
+
+%        \item Such methods feed the FSM with values of type \texttt{sd.lab.agency.fsm.impl.\alert{Command}}
+%        %
+%        \begin{itemize}
+%        	\item i.e., \texttt{CONTINUE}, \texttt{RESTART}, \texttt{PAUSE}, or \texttt{STOP}
+%        	\item if no control method is called within a callback, \texttt{\alert{CONTINUE}} is fed to the FSM, by default
+%        \end{itemize}
+
         \bigskip
-        
+
         \item State transition of the FSM provoke the invocation of callbacks
          %
         \begin{itemize}
         	\item i.e., \texttt{onBegin()}, \texttt{onRun()}, \texttt{onEnd()}, or \texttt{onUncaughtException(...)}
         \end{itemize}
     \end{itemize}
-    
+
     \framebreak
-    
+
     \begin{center}
-        \includegraphics[height=.9\textheight]{img/fsa.pdf}
+%        \includegraphics[height=.9\textheight]{img/fsa.pdf}
+        \includegraphics[width=.8\linewidth]{img/fsm.pdf}
     \end{center}
-    
+
+    \begin{block}{Legend}\centering
+        life-cycle method / callback
+    \end{block}
+
 \end{frame}
 
 \section{Exercises}
@@ -582,27 +587,27 @@
     Consider the \texttt{sd.lab.agency.impl.\alert{BaseAgent}} class:
     %
     \lstinputlisting{code/BaseAgent.java}
-    
+
     \framebreak
-    
+
     \begin{block}{TODO}
         Complete the implementation of the following methods:
         %
         \begin{itemize}
             \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Created}}}
-            
+
             \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Started}}}
-            
+
             \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Running}}}
-            
+
             \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Paused}}}
-            
-            \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Stopped}}} 
-            
+
+            \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Stopped}}}
+
             \item \texttt{BaseAgent::\alert{doBegin}}, and  \texttt{BaseAgent::\alert{begin}}
-            
+
             \item \texttt{BaseAgent::\alert{doRun}}, and \texttt{BaseAgent::\alert{run}}
-            
+
             \item \texttt{BaseAgent::\alert{doEnd}}, and \texttt{BaseAgent::\alert{end}}
         \end{itemize}
         %
@@ -617,7 +622,7 @@
 \begin{block}{TODO}
     \begin{itemize}
         \item Complete the implementation of \texttt{\alert{PongAgent}}
-        
+
         \item In such a way that all tests in \texttt{sd.lab.agency.\alert{TestPingPong}} are satisfied
     \end{itemize}
 \end{block}
@@ -625,11 +630,11 @@
 \begin{exampleblock}{Specification}
     \begin{itemize}
         \item The Pong agent waits for a message whose content is \texttt{"ping"} coming from the Ping agent
-        
+
         \item It then then responds back with a message whose content is \texttt{"pong"}, directed towards the Ping agent
-        
+
         \item Such behaviour is repeated until the Pong agent receives a containing \texttt{"stop"}
-        
+
         \item[!] You can assume each agent knows the name of the other one, by construction
     \end{itemize}
 \end{exampleblock}
@@ -637,7 +642,7 @@
 \begin{alertblock}{Question time}
     \begin{itemize}
         \item Can you see why suspensive operations are non-blocking in our architecture?
-        
+
         \item Can you see where our architecture falls short?
     \end{itemize}
 \end{alertblock}
@@ -650,15 +655,15 @@
 
 \begin{itemize}
     \item In the Ping-pong example, agents are aware of their respective names, \alert{by construction}
-    
+
     \vspace{.3cm}
-    
+
     \item This is ok for examples, but \alert{it is not the case} in real world Distributed Systems
-    
+
     \vspace{.3cm}
-    
-    \item There, a \alert{white pages} service is usually in place, letting \alert{discover} their peers, \alert{dynamically} 
-    
+
+    \item There, a \alert{white pages} service is usually in place, letting \alert{discover} their peers, \alert{dynamically}
+
 \end{itemize}
 
 \vspace{.3cm}
@@ -672,7 +677,7 @@
 \begin{exampleblock}{Some advices}
     \begin{itemize}
         \item What about employing a \alert{tuple space} as white pages?
-        
+
         \item Consider exploiting ``Negative Lookaheads'' in regular expressions
         %
         \begin{itemize}
