@@ -1,3 +1,4 @@
+% !TeX spellcheck = en_GB
 %\documentclass[handout]{beamer}\mode<presentation>{\usetheme{AMSCesenaPurpleAndGold}}
 \documentclass[presentation]{beamer}\mode<presentation>{\usetheme{AMSCesenaPurpleAndGold}}
 %%%%
@@ -6,7 +7,10 @@
 \usepackage{my-listings}
 \usepackage{forloop}
 
-\newcommand{\labN}{3}
+\newcommand{\labN}{4}
+\newcommand{\labGroup}{https://gitlab.com/pika-lab/courses/ds/ay2021}
+\newcommand{\labRepo}{\labGroup/lab-\labN}
+
 
 \title[L\labN{} -- Building Agents]{Building Agents from Scratch}
 %
@@ -45,106 +49,42 @@
 \frame{\titlepage}
 %\\\\\\\\\\\\\\\\\\\\\
 
-\section{Wetting your appetite}
+\section{Motivation \& Lecture Goals}
 
-\begin{frame}
-\frametitle{Motivation \& Lecture Goals I}
+\begin{frame}[allowframebreaks]
+\frametitle{Motivation \& Lecture Goals}
 
-\begin{itemize}
-	\item As you may have understood OOP is poorly suited for programming Distributed Systems
-	
-	\vfill
-	
-	\item This is because \alert{objects do not encapsulate control flow}
-	%
 	\begin{itemize}
-	    \item they just encapsulate state \& behaviour (i.e. methods)
-	    
-	    \item any thread can invoke some object's methods, in the general case
+		\item This lecture is aimed at showing how \jade{}-like agents can be constructed from scratch
+		%
+		\begin{itemize}
+			\item we will build a simple framework for MAS execution $\ldots$
+			\item $\ldots$ to be extended in future lectures with interaction- and distribution-related features
+		\end{itemize}
+		
+		\bigskip
+		
+		\item Building an agent framework requires defining, at least:
+		%
+		\begin{enumerate}
+			\item how agents are executed, created, stopped, or paused (and therefore resumed)
+			\item how agents may carry on several \emph{behaviours}, concurrently
+			\item how agents may \emph{interact}, possibly in spite of distribution
+		\end{enumerate}
 	\end{itemize}
-	
-	\vfill
-	
-	\item This trait of OOP makes it difficult to deal with scenarios where the \alert{interaction} is the major dimension to be taken into account
-    %
-    \begin{itemize}
-        \item[ie] those contexts where it is important to specify \alert{when} some object's behaviour or state transition should be triggered, and \alert{why}
-        \item[!] defining \alert{when} to do something is as important as defining \alert{how} to do it
-    \end{itemize}
-    
-    \vfill
-    
-    \item The notion of \alert{agent} has emerged, targeting this issue
-    %
-    \begin{itemize}
-        \item it has actually been declined in several ways, depending on the context
-        \item \alert{autonomy} is the most prominent feature characterising agents, regardless of the particular declination
-    \end{itemize}
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Motivation \& Lecture Goals II}
-
-\begin{itemize}
-	\item In this Lab and in the next one, we elaborate on the notion of agent -- from basic to \textsc{Jade} -- and aim at reproducing it, step by step
-	%
-	\begin{itemize}
-	    \item[!] \alert{before next lab}, you are kindly invited to recall JADE's agents and behaviours functioning
-	\end{itemize}
-	
-	\vfill
-	
-	\item We here consider an agent as an object (in the OOP sense) with its own \alert{logical} control flow
-	
-	\vfill
-	
-	\item Differently from what we did so far, we won't explicitly use \alert{threads}
-	
-	\vfill
-	
-	\item Our agents will share the same \texttt{ExecutorService}, when running within the same JVM
-	%
-	\begin{itemize}
-	    \item this will provide our agents with great \alert{scalabilty \& lightweightness}
-	\end{itemize}
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Motivation \& Lecture Goals III}
-
-\begin{itemize}
-	\item In this Lab we will simply focus on designing a way for objects to encapsulate control flow
-	
-	\vfill
-	
-	\item In the next Lab we will focus on endowing agents with \emph{multiple} \alert{logical} control flow
-	%
-	\begin{itemize}
-	    \item i.e. something similar to JADE's behaviours
-	\end{itemize}
-	
-	\vfill
-	
-	\item Finally, some future Labs are likely to be devoted to opening our agent-based to \alert{distribution}
-	
-\end{itemize}
 
 \end{frame}
 
 \subsection{About the practical activities}
 
 \begin{frame}
-\frametitle{Lab 5 Repository on GitLab}
+\frametitle{Lab \labN{} Repository on GitLab}
 
 	\begin{itemize}
 		\item Examples and exercises described in this lecture are provided by means of the following GitLab repository:
 		%
 		\begin{center}
-			\url{https://gitlab.com/pika-lab/courses/ds/aa1920/lab-05}
+			\url{\labRepo}
 		\end{center}
 		
 		\vfill
@@ -162,47 +102,92 @@
 		%
 		\begin{itemize}
 		    \item in case of problems in importing the project on IntelliJ, try to downgrade the gradle wrapper
-		    %
-		    \item[\$] \texttt{./gradlew wrapper \alert{--gradle-version \textit{4.8.1}}}
 		\end{itemize}
 		
 		\vfill
 		
-		\item In order to be able to submit your exercises, please ensure you requested access to the \href{https://gitlab.com/pika-lab/courses/ds/aa1920}{GitLab group of the course}
+		\item In order to be able to submit your exercises, please ensure you requested access to the \href{\labGroup}{GitLab group of the course}
 	\end{itemize}
 
 \end{frame}
 
 \section{Towards Multi-Agent Systems}
 
-\subsection{Overview}
+\subsection{Metamodel}
 
-\begin{frame}
-\frametitle{Overview}
+\begin{frame}[allowframebreaks]
+\frametitle{Metamodel}
 
 	\begin{block}{MAS}
 	    We consider a MAS to be composed by a number of agents \alert{interacting} within an environment
 	\end{block}
-	
-	\vfill
-	
-	\begin{block}{Agent}
-	    We consider an Agent as an object (data + behaviour) coming with its own \alert{logical} control flow
-	\end{block}
-	%
-	\begin{itemize}
-	    \item[!] we prefer to avoid the \alert{1-agent-1-thread} situation, to prevent scalability issues
-	\end{itemize}
-	
-	\vfill
+
+	\bigskip
 	
 	\begin{block}{Environment}
-	    We consider an Environment as a container of agents, exposing \alert{shared} facilities aimed at \alert{supporting} the agents' interaction
+		We consider an Environment as a container of agents, exposing \emph{shared} facilities aimed at \alert{supporting} the agents' \alert{creation}, and \alert{interaction}
 	\end{block}
+	
+	\bigskip
+	
+	\begin{block}{Agent}
+	    We consider an Agent as an object (data + behaviour) coming with its own \alert{internal scheduler} aimed at executing an arbitrary amount of \alert{behaviours} concurrently
+	\end{block}
+	
+	\bigskip
+	
+	\begin{block}{Agents' Finite State Machine (FSM)}
+		We assume each Agent is moved by an internal FSM aimed supporting life-cycle management operations such as: \emph{start}, \emph{restart}, \emph{pause}, \emph{resume}, \emph{stop}	
+	\end{block}
+	
+	\bigskip
+	
+	\begin{block}{Behaviours}
+		We consider a Behaviour as an atomic or composite action an agent may carry on, concurrently (w.r.t. other Behaviours)
+	\end{block}
+	
+	\bigskip
+	
+	\begin{block}{Agents' Interaction}
+		Any means letting an agent affect the operation of other agents.
+		Can be achieved in several ways (message-passing, shared-memory, stigmergy, etc).
+		%
+		\begin{center}\bfseries
+			(we will endow agents with interaction in future lectures, via \linda{})
+		\end{center}
+	\end{block}
+
+\end{frame}
+
+\subsection{Activity Overview}
+
+\begin{frame}%[allowframebreaks]
+	\frametitle{Activity Overview}
+	
+	For each notion in the aforementioned meta-model, we will:
 	%
-	\begin{itemize}
-	    \item[!] we will rely on shared \alert{\texttt{TextualSpace}s} for such purpose
-	\end{itemize}
+	\vfill
+	%
+	\begin{enumerate}
+		\item draw the general design
+		
+		\vfill
+		
+		\item propose a minimal Java interface
+		
+		\vfill
+		
+		\item sketch the architecture
+		
+		\vfill
+		
+		\item describe the implementation stub
+		
+		\vfill
+		
+		\item complete the implementation via exercises
+	\end{enumerate}
+	
 \end{frame}
 
 \subsection{Environment}
