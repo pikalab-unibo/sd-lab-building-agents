@@ -3,7 +3,7 @@ new AbstractAgent("do-until") {
   
   @Override 
   public void setup() {
-    Behaviour.of(() -> print(i))
+    Behaviour.of(() -> log(i))
       .repeatUntil(() -> i >= 5)
       .andThen(() -> stop())
       .addTo(this);

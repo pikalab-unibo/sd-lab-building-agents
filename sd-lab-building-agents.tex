@@ -539,7 +539,7 @@
 
             \item[\texttt{STOPPED}] | after the \texttt{stop()} method has been called
 
-            \item[terminated] | after the \texttt{onStop()} callback has been executed
+            \item[terminated] | after the \texttt{onEnd()} callback has been executed
         \end{description}
 
     	\bigskip
@@ -568,7 +568,7 @@
         \item State transition of the FSM provoke the invocation of callbacks
          %
         \begin{itemize}
-        	\item i.e., \texttt{onBegin()}, \texttt{onRun()}, \texttt{onEnd()}, or \texttt{onUncaughtException(...)}
+        	\item i.e., \texttt{onBegin()}, \texttt{onRun()}, \texttt{onEnd()}, or \texttt{onUncaughtError(...)}
         \end{itemize}
     \end{itemize}
 
@@ -1011,33 +1011,6 @@
 \end{frame}
 
 \subsubsection{Usage Examples}
-
-\begin{frame}%[allowframebreaks]
-    \frametitle{Sequential behaviours}
-
-    The following agents expose the same sequential behaviour:
-
-    \vfill
-
-    \begin{columns}
-        \begin{column}{.48\linewidth}
-            \lstinputlisting[basicstyle=\tiny\ttfamily]{code/sequence-example.java}
-        \end{column}
-        %	\vfill
-        \begin{column}{.48\linewidth}
-            \lstinputlisting[basicstyle=\tiny\ttfamily]{code/sequence-example-2.java}
-        \end{column}
-    \end{columns}
-
-    \vfill
-
-    Output:
-    %
-    \begin{itemize}
-        \item \texttt{a, b, c}
-    \end{itemize}
-
-\end{frame}
 
 \begin{frame}%[allowframebreaks]
     \frametitle{Sequential behaviours}

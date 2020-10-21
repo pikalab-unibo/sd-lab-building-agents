@@ -3,7 +3,7 @@ new AbstractAgent("do-while") {
   
   @Override 
   public void setup() {
-    Behaviour.of(() -> print(i))
+    Behaviour.of(() -> log(i))
       .repeatWhile(() -> i < 5)
       .andThen(() -> stop())
       .addTo(this);

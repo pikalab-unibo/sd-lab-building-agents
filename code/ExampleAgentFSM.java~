@@ -20,7 +20,7 @@ class ExampleAgentFSM /* ... */ {
   
   void onUncaughtError(Exception e) {
     log(x++);
-    if (e instanceof NullPointerExecption) {
+    if (e instanceof NullPointerExecption()) {
       stop();
     }
   }

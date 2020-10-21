@@ -6,6 +6,6 @@ interface Agent extends AgentFSM {
     void tearDown(); // Callback to be called BEFORE termination
 
     // Methods for adding or removing behaviours
-    void addBehaviour(Behaviour behaviour);
-    void removeBehaviour(Behaviour behaviour);
+    BehaviouralAgent addBehaviour(Behaviour behaviour);
+    BehaviouralAgent removeBehaviour(Behaviour behaviour);
 }

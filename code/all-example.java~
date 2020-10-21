@@ -1,5 +1,6 @@
-new BaseBehaviouralAgent("all-example") {
-  @Override public void setup() {
+new AbstractAgent("all-example") {
+  @Override 
+  public void setup() {
     Behaviour.allOf(
         Behaviour.of(() -> print(1))
             .andThen(() -> print(2)),

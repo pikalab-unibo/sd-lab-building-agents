@@ -1,4 +1,4 @@
-new BaseBehaviouralAgent("any-example") {
+new AbstractAgent("any-example") {
   @Override public void setup() {
     Behaviour.anyOf(
         Behaviour.of(() -> print(1))

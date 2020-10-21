@@ -1,7 +1,8 @@
-new BaseBehaviouralAgent("do-until") {
+new AbstractAgent("do-until") {
   private int i = 0;
   
-  @Override public void setup() {
+  @Override 
+  public void setup() {
     Behaviour.of(() -> print(i))
       .repeatUntil(() -> i >= 5)
       .andThen(() -> stop())

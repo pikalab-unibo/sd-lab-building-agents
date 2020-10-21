@@ -2,12 +2,12 @@ new AbstractAgent("all-example") {
   @Override 
   public void setup() {
     Behaviour.allOf(
-        Behaviour.of(() -> print(1))
-            .andThen(() -> print(2)),
+        Behaviour.of(() -> log(1))
+            .andThen(() -> log(2)),
 
-        Behaviour.of(() -> print("a"))
-            .andThen(() -> print("b"))
-            .andThen(() -> print("c"))
+        Behaviour.of(() -> log("a"))
+            .andThen(() -> log("b"))
+            .andThen(() -> log("c"))
     ).andThen(() -> stop())
     .addTo(this);
   }
