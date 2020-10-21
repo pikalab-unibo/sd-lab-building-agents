@@ -1,0 +1,10 @@
+new BaseBehaviouralAgent("seq-example") {
+  @Override public void setup() {
+    Behaviour.sequence(
+        Behaviour.of(() -> print("a") ),
+        Behaviour.of(() -> print("b") ),
+        Behaviour.of(() -> print("c") ),
+        Behaviour.of(() -> stop()     ),
+    ).addTo(this);
+  }
+}

@@ -1,0 +1,28 @@
+@startuml
+interface Behaviour 
+
+abstract class Await<T>
+
+abstract class LindaOperation<T>
+
+abstract class Receive
+
+abstract class Send
+
+class Parallel
+
+class Sequence
+
+class Wait
+
+class DoWhile
+
+Await <|-- LindaOperation
+LindaOperation <|-- Send
+LindaOperation <|-- Receive
+Behaviour <|-- Await
+Behaviour <|-- Parallel
+Behaviour <|-- Sequence 
+Behaviour <|-- Wait
+Sequence <|-- DoWhile
+@enduml

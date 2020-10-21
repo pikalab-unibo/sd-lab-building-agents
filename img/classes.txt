@@ -1,0 +1,80 @@
+@startuml
+interface Behaviour {
+  + {abstract} void execute(BehaviouralAgent agent)
+  + {abstract} boolean isPaused()
+  + {abstract} boolean isOver()
+  + {abstract} Behaviour deepClone()
+}
+
+abstract class Await<T> {
+  + void execute(BehaviouralAgent agent)
+  + void onResult(BehaviouralAgent agent, T result)
+  # {abstract} CompletableFuture<T> getPromise(BehaviouralAgent agent)
+  + boolean isPaused()
+  + boolean isOver()
+  + Behaviour deepClone()
+}
+
+abstract class LindaOperation<T> {
+  # CompletableFuture<T> getPromise(BehaviouralAgent agent)
+  # {abstract} CompletableFuture<T> invokeOnTupleSpace(BehaviouralAgent agent, TextualSpace tupleSpace)
+  # {abstract} String getTupleSpaceName(BehaviouralAgent agent)
+  + void execute(BehaviouralAgent agent)
+}
+
+abstract class Receive {
+  # CompletableFuture<StringTuple> invokeOnTupleSpace(BehaviouralAgent agent, TextualSpace tupleSpace)
+  # String getTupleSpaceName(BehaviouralAgent agent)
+  + void onResult(BehaviouralAgent agent, StringTuple result)
+  + void onMessageReceived(BehaviouralAgent agent, Message message)
+}
+
+abstract class Send {
+  # CompletableFuture<StringTuple> invokeOnTupleSpace(BehaviouralAgent agent, TextualSpace tupleSpace)
+  # String getTupleSpaceName(BehaviouralAgent agent)
+  + void onResult(BehaviouralAgent agent, StringTuple result)
+  + {abstract} String getReceiver()
+  + {abstract} Term getPayload()
+  + {abstract} void onMessageSent(BehaviouralAgent agent, Message message)
+}
+
+class Parallel{
+  + Behaviour deepClone()
+  + void execute(BehaviouralAgent agent)
+  + boolean isOver()
+  + boolean isPaused()
+}
+
+class Sequence {
+  + void execute(BehaviouralAgent agent)
+  + boolean isPaused()
+  + boolean isOver()
+  + Behaviour deepClone()
+  # List<Behaviour> getSubBehaviours()
+  # int countResidualSubBehaviours()
+  # void addSubBhaviours(Collection<Behaviour> subBehaviours)
+}
+
+class Wait {
+  + public Behaviour deepClone()
+  + public void execute(BehaviouralAgent agent)
+  + public boolean isOver()
+}
+
+class DoWhile {
+  + void execute(BehaviouralAgent agent)
+  + boolean condition()
+  + boolean isOver()
+  + Behaviour deepClone()
+}
+
+
+Await <|-- LindaOperation
+LindaOperation <|-- Send
+LindaOperation <|-- Receive
+Behaviour <|-- Await
+Behaviour <|-- Parallel
+Behaviour <|-- Sequence 
+Behaviour <|-- Wait
+Sequence <|-- DoWhile
+@enduml

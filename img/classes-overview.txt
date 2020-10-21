@@ -1,0 +1,16 @@
+@startuml
+interface Behaviour 
+
+class Parallel
+
+class Sequence
+
+class Wait
+
+class DoWhile
+
+Behaviour <|-- Parallel
+Behaviour <|-- Sequence 
+Behaviour <|-- Wait
+Sequence <|-- DoWhile
+@enduml

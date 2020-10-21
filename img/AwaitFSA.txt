@@ -1,0 +1,9 @@
+@startuml
+hide empty description
+
+[*] --> CREATED: //""initialisation""//
+CREATED --> PAUSED: ""execute(...)""
+PAUSED --> COMPLETED: ""//promise completion//""
+COMPLETED --> DONE: ""execute(...)""
+DONE --> [*]
+@enduml
