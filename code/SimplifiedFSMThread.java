@@ -1,0 +1,19 @@
+boolean stopped = false;
+
+Thread thread = new Thread(() -> {
+    try {
+        onBegin();
+        while (!stopped) { onRun(); }
+    } catch (Exception e) {
+        onUncaughtError(e);
+    } finally {
+        onEnd();
+    }
+});
+
+void start() { thread.start(); }
+void stop() { stopped = true; }
+
+void pause() { /* ??? */ }
+void resume() { /* ??? */ }
+void restart() { /* ??? */ }

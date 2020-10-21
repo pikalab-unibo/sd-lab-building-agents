@@ -315,6 +315,12 @@
 
     \bigskip
 
+    \begin{itemize}
+        \item[!] these classes are already implemented
+    \end{itemize}
+
+    \framebreak
+
     \begin{alertblock}{(Spoiler Alert) \textbf{Distributed} Environment}
         \begin{itemize}
         	\item Supports the interaction among agents running on different machines
@@ -574,119 +580,156 @@
     \end{center}
 
     \begin{block}{Legend}\centering
-        life-cycle method / callback
+        life-cycle method $(input)$ / callback $(output)$
     \end{block}
 
 \end{frame}
 
 \section{Exercises}
 
-\subsection{Implementing the FSA}
+\startExercise
 
-\begin{frame}[allowframebreaks]{Exercise 5-1 -- Implementing \texttt{BaseAgent}}
-    Consider the \texttt{sd.lab.agency.impl.\alert{BaseAgent}} class:
+\subsection{Thread-based agent FSM}
+
+\begin{frame}[c, allowframebreaks]
+    \frametitle{Exercise \currentExercise{} -- Thread-based agent FSM}
+
+    \begin{block}{GitLab repository}\centering
+        \url{\labRepo}
+    \end{block}
+
+    \bigskip
+
+    Consider the class stub \texttt{sd.lab.agency.fsm.impl.\alert{ThreadBasedAgentFSM}}:
     %
-    \lstinputlisting{code/BaseAgent.java}
+    \bigskip
+    %
+    \begin{itemize}
+        \item It implements the agent FSM by leveraging a thread for each agent
+
+        \framebreak
+
+        \item Intuitively and agent FSM's thread works as follows:
+        %
+        \lstinputlisting[language=Java]{code/SimplifiedFSMThread.java}
+
+        \item However, this solution comes with several drawbacks:
+        %
+        \begin{itemize}
+            \item is the expected callbacks workflow \emph{always} respected?
+            \item how can the methods \texttt{pause}, \texttt{resume}, \texttt{restart}, and \texttt{await} be implemented?
+        \end{itemize}
+
+    \end{itemize}
 
     \framebreak
 
-    \begin{block}{TODO}
-        Complete the implementation of the following methods:
+    Expected activity:
+    %
+    \bigskip
+    %
+    \begin{enumerate}
+
+        \item Complete the implementation of the \texttt{ThreadBasedAgentFSM} class\ldots
+
+        \bigskip
+
+        \item \ldots in such a way that tests in \texttt{sd.lab.agency.\alert{TestThreadedAgentFSM}} are all satisfied
+
+        \bigskip
+
+        \item Submit your exercise to the following branch on Lab \labN{} repository
         %
+        \begin{center}
+            \texttt{submissions/\textit{name.surname}}
+        \end{center}
+
+        \bigskip
+
+        \item Continuous Integration will automatically run tests
+    \end{enumerate}
+
+\end{frame}
+
+\startExercise
+
+\subsection{Executor-Service-based agent FSM (Advanced)}
+
+\begin{frame}[c, allowframebreaks]
+    \frametitle{Exercise \currentExercise{} -- Executor-Service-based agent FSM}
+
+    \begin{alertblock}{This is an \textbf{advanced} exercise}
         \begin{itemize}
-            \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Created}}}
-
-            \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Started}}}
-
-            \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Running}}}
-
-            \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Paused}}}
-
-            \item \texttt{BaseAgent::\alert{doStateTransitionFrom\textit{Stopped}}}
-
-            \item \texttt{BaseAgent::\alert{doBegin}}, and  \texttt{BaseAgent::\alert{begin}}
-
-            \item \texttt{BaseAgent::\alert{doRun}}, and \texttt{BaseAgent::\alert{run}}
-
-            \item \texttt{BaseAgent::\alert{doEnd}}, and \texttt{BaseAgent::\alert{end}}
+            \item feel free to skip it
+            \item try it if you are curious about the idea of making MAS scalable
         \end{itemize}
-        %
-        in such a way that all tests in \texttt{sd.lab.agency.\alert{TestAgent}} are satisfied
+    \end{alertblock}
+
+    \bigskip
+
+    \begin{block}{Motivation}
+        \begin{itemize}
+            \item the 1-agent-1-thread approach makes MAS poorly scalable
+            %
+            \begin{itemize}
+                \item threads are resource greedy and slow upon startup
+            \end{itemize}
+
+            \item the 1-mas-1-executor-service approach if more flexible
+            %
+            \begin{itemize}
+                \item agents \emph{share} the same executor service, \emph{hosted by the environment}
+                \item the executor service takes care of spawning threads \emph{upon need}
+                \item the MAS as a whole is more resource efficient
+            \end{itemize}
+        \end{itemize}
     \end{block}
-\end{frame}
 
-\subsection{A simple ping-ping system}
+    \bigskip
 
-\begin{frame}[allowframebreaks]{Exercise 5-2 -- Implementing ping-pong}
-
-\begin{block}{TODO}
+    Consider the class stub \texttt{sd.lab.agency.fsm.impl.\alert{ExecutorBasedAgentFSM}}:
+    %
+    \bigskip
+    %
     \begin{itemize}
-        \item Complete the implementation of \texttt{\alert{PongAgent}}
-
-        \item In such a way that all tests in \texttt{sd.lab.agency.\alert{TestPingPong}} are satisfied
-    \end{itemize}
-\end{block}
-
-\begin{exampleblock}{Specification}
-    \begin{itemize}
-        \item The Pong agent waits for a message whose content is \texttt{"ping"} coming from the Ping agent
-
-        \item It then then responds back with a message whose content is \texttt{"pong"}, directed towards the Ping agent
-
-        \item Such behaviour is repeated until the Pong agent receives a containing \texttt{"stop"}
-
-        \item[!] You can assume each agent knows the name of the other one, by construction
-    \end{itemize}
-\end{exampleblock}
-
-\begin{alertblock}{Question time}
-    \begin{itemize}
-        \item Can you see why suspensive operations are non-blocking in our architecture?
-
-        \item Can you see where our architecture falls short?
-    \end{itemize}
-\end{alertblock}
-
-\end{frame}
-
-\subsection{White pages prototype}
-
-\begin{frame}[allowframebreaks]{Exercise 5-3 -- Dynamically searching agent names}
-
-\begin{itemize}
-    \item In the Ping-pong example, agents are aware of their respective names, \alert{by construction}
-
-    \vspace{.3cm}
-
-    \item This is ok for examples, but \alert{it is not the case} in real world Distributed Systems
-
-    \vspace{.3cm}
-
-    \item There, a \alert{white pages} service is usually in place, letting \alert{discover} their peers, \alert{dynamically}
-
-\end{itemize}
-
-\vspace{.3cm}
-
-\begin{block}{TODO}
-    Try editing the Ping \& Pong agents in such a way that they are able to \alert{discover} each others dynamically, \alert{before} starting the ping-pong protocol
-\end{block}
-
-\framebreak
-
-\begin{exampleblock}{Some advices}
-    \begin{itemize}
-        \item What about employing a \alert{tuple space} as white pages?
-
-        \item Consider exploiting ``Negative Lookaheads'' in regular expressions
+        \item It implements the agent FSM by leveraging on a shared executor service
         %
         \begin{itemize}
-            \item[ie] \url{https://www.regular-expressions.info/lookaround.html}
-            \item[eg] \url{https://regex101.com/r/66NTyD/1}
-            \item[eg] class \texttt{sd.lab.linda.textual.\alert{TestNegatedTemplate}}
+            \item which is supposed to be provided by the environment$\ldots$
+            \item $\ldots$ upon agent's creation or registration
         \end{itemize}
     \end{itemize}
-\end{exampleblock}
+
+    \framebreak
+
+    Expected activity:
+    %
+    \bigskip
+    %
+    \begin{enumerate}
+
+        \item Complete the implementation of the \texttt{ExecutorBasedAgentFSM} class\ldots
+
+        \bigskip
+
+        \item \ldots in such a way that tests in \texttt{sd.lab.agency.\alert{TestExecutorAgentFSM}} are all satisfied
+
+        \bigskip
+
+        \item You will deeply leverage \& practice with \emph{asynchronous programming}
+
+        \bigskip
+
+        \item Submit your exercise to the following branch on Lab \labN{} repository
+        %
+        \begin{center}
+            \texttt{submissions/\textit{name.surname}}
+        \end{center}
+
+        \bigskip
+
+        \item Continuous Integration will automatically run tests
+    \end{enumerate}
 
 \end{frame}
 
