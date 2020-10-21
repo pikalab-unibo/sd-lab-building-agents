@@ -2,7 +2,7 @@
 public interface Behaviour {
 
   // Encapsulate the actual business logic of this behaviour
-  void execute(Agent agent) throws Exception;
+  void execute(BehaviouralAgent agent) throws Exception;
 
   // Check if this behaviour is paused
   default boolean isPaused() { return false; }
